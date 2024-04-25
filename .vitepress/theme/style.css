@@ -1,0 +1,155 @@
+/**
+ * Customize default theme styling by overriding CSS variables:
+ * https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css
+ */
+
+/**
+ * Colors: Background
+ *
+ * - `bg`: The bg color used for main screen.
+ *
+ * - `bg-alt`: The alternative bg color used in places such as "sidebar",
+ *   or "code block".
+ *
+ * - `bg-elv`: The elevated bg color. This is used at parts where it "floats",
+ *   such as "dialog".
+ *
+ * - `bg-soft`: The bg color to slightly distinguish some components from
+ *   the page. Used for things like "carbon ads" or "table".
+ * -------------------------------------------------------------------------- */
+
+ :root {
+    --vp-c-bg: #FFF9F0;
+    --vp-c-bg-alt: #F7F3EB;
+    --vp-c-bg-soft: rgba(217, 217, 217, 0.2); /* #D9D9D9 */
+ }
+
+ /**
+ * Colors: Text
+ *
+ * - `text-1`: Used for primary text.
+ *
+ * - `text-2`: Used for muted texts, such as "inactive menu" or "info texts".
+ *
+ * - `text-3`: Used for subtle texts, such as "placeholders" or "caret icon".
+ * -------------------------------------------------------------------------- */
+
+ :root {
+    --vp-c-text-1: #404040;
+    --vp-c-text-2: rgba(64, 64, 64, 0.78); /* #404040 */
+    --vp-c-text-3: rgba(64, 64, 64, 0.56); /* #404040 */
+ }
+
+
+ /**
+ * Colors: Function
+ *
+ * - `default`: The color used purely for subtle indication without any
+ *   special meanings attached to it such as bg color for menu hover state.
+ *
+ * - `brand`: Used for primary brand colors, such as link text, button with
+ *   brand theme, etc.
+ *
+ * - `tip`: Used to indicate useful information. The default theme uses the
+ *   brand color for this by default.
+ *
+ * - `warning`: Used to indicate warning to the users. Used in custom
+ *   container, badges, etc.
+ *
+ * - `danger`: Used to show error, or dangerous message to the users. Used
+ *   in custom container, badges, etc.
+ *
+ * To understand the scaling system, refer to "Colors: Palette" section.
+ * -------------------------------------------------------------------------- */
+
+ :root {
+    --vp-c-brand-1: #82540E;
+    --vp-c-brand-2: #A07C46;
+    --vp-c-brand-3: #BEA47C;
+    --vp-c-brand-soft: rgba(255, 165, 27, 0.14);
+
+    --vp-c-brand-alt-1: #54AF5B;
+    --vp-c-brand-alt-2: #5BBD62;
+    --vp-c-brand-alt-3: #62CC6A;
+    --vp-c-brand-alt-soft: rgba(122, 255, 133, 0.14);  
+
+    --vp-c-tip-1: var(--vp-c-purple-1);
+    --vp-c-tip-2: var(--vp-c-purple-2);
+    --vp-c-tip-3: var(--vp-c-purple-3);
+    --vp-c-tip-soft: var(--vp-c-purple-soft);
+  
+    --vp-c-note-1: var(--vp-c-indigo-1);
+    --vp-c-note-2: var(--vp-c-indigo-2);
+    --vp-c-note-3: var(--vp-c-indigo-3);
+    --vp-c-note-soft: var(--vp-c-indigo-soft);    
+ }
+
+
+/**
+ * Component: Button
+ * -------------------------------------------------------------------------- */
+
+:root {
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: var(--vp-c-white);
+  --vp-button-brand-bg: var(--vp-c-brand-3);
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: var(--vp-c-white);
+  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: var(--vp-c-white);
+  --vp-button-brand-active-bg: var(--vp-c-brand-1);
+
+  --vp-button-alt-border: transparent;
+  --vp-button-alt-text: var(--vp-c-white);
+  --vp-button-alt-bg: var(--vp-c-brand-alt-3);
+  --vp-button-alt-hover-border: transparent;
+  --vp-button-alt-hover-text: var(--vp-c-white);
+  --vp-button-alt-hover-bg: var(--vp-c-brand-alt-2);
+  --vp-button-alt-active-border: transparent;
+  --vp-button-alt-active-text: var(--vp-c-white);
+  --vp-button-alt-active-bg: var(--vp-c-brand-alt-1);
+}
+
+/**
+ * Component: Home
+ * -------------------------------------------------------------------------- */
+
+:root {
+  --vp-home-hero-name-color: var(--vp-c-text-1);
+  
+  .VPHomeHero h1.name {
+    font-size: 56px;
+    font-family: "Pacifico", cursive;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1.2;
+    letter-spacing: 0;
+  }
+
+  .VPHomeHero p.text {
+    padding-top: 12px;
+  }
+
+  @media (min-width: 640px) {
+    .VPHomeHero h1.name {
+      font-size: 80px;
+    }    
+  }
+
+  @media (min-width: 960px) {
+    .VPHomeHero h1.name {
+      font-size: 104px;
+    }    
+  }
+}
+
+
+/**
+ * Component: Algolia
+ * -------------------------------------------------------------------------- */
+
+.DocSearch {
+  --docsearch-primary-color: var(--vp-c-brand-1) !important;
+}
+
