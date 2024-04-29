@@ -75,7 +75,8 @@ export default defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: 'Guide', link: '/guide/getting-started', activeMatch: '/guide/' }
+      { text: 'Guide', link: '/guide/getting-started', activeMatch: '/guide/' },
+      { text: 'API Reference', link: 'https://api.soil-kt.com/' }
     ],
 
     sidebar: {
