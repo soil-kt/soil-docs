@@ -14,11 +14,6 @@ Currently, the only browsers that support WasmGC are Chrome and Firefox.
 For the latest compatibility information, please visit https://webassembly.org/features/.
 :::
 
-::: warning Known Issues
-We are aware of an issue with Kotlin Wasm on mobile browsers where the app's screen size may not adjust correctly.  
-[compose-multiplatform #4620](https://github.com/JetBrains/compose-multiplatform/issues/4620)
-:::
-
 
 ## Download
 

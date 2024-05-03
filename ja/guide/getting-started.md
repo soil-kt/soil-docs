@@ -14,11 +14,6 @@ Source code: <https://github.com/soil-kt/soil/tree/main/sample/>
 最新の対応状況は https://webassembly.org/features/ を確認してください。
 :::
 
-::: warning 既知の問題
-モバイルブラウザで試すと、アプリの画面サイズが正しく調整されない Kotlin Wasm の問題を把握しています。
-[compose-multiplatform #4620](https://github.com/JetBrains/compose-multiplatform/issues/4620)
-:::
-
 
 ## Download
 
