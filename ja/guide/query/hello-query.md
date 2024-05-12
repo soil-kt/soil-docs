@@ -59,7 +59,8 @@ Query には、 Key のタイプごとに `rememberXxx` という API が用意�
 fun App() {
     SwrClientProvider(client = swrClient) {
         MaterialTheme {
-            when (val query = rememberQuery(HelloQueryKey())) {
+            val key = remember { HelloQueryKey() }
+            when (val query = rememberQuery(key)) {
                 is QuerySuccessObject -> Text(query.data)
                 is QueryLoadingObject -> Text("Loading...")
                 is QueryLoadingErrorObject,
@@ -85,7 +86,8 @@ fun App() {
         MaterialTheme {
             ErrorBoundary(fallback = { Text("Error :(") }) {
                 Suspense(fallback = { Text("Loading...") }) {
-                    val query = rememberQuery(HelloQueryKey())
+                    val key = remember { HelloQueryKey() }
+                    val query = rememberQuery(key)
                     Await(query) { result ->
                         Text(result)
                     }
