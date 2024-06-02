@@ -102,24 +102,27 @@ val counter2Atom = atom(0, saverKey = "counter2", navGraphScope)
 Step 3で定義した `AtomRoot` には1つの `AtomStore` のみを引数に指定していました。
 `AtomRoot` の引数バリエーションとして複数の `AtomStore` と `fallbackScope` を渡すことも可能です。
 
-次のコードはサンプルアプリに利用しているナビゲーションライブラリ [Voyager](https://github.com/adrielcafe/voyager) のライフサイクルに依存した2種類のスコープです。Voyager では、画面単位とナビゲーション全体にわたって状態を管理できます。
+次のコードはサンプルアプリに利用しているナビゲーションライブラリ [androidx.Navigation](https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-navigation-routing.html) の `NavBackStackEntry` に依存した2種類のスコープで状態を管理している例です。
 
-- [ScreenModel | Voyager](https://voyager.adriel.cafe/screenmodel)
+- currentScreen: 現在の画面のBackStackEntryを利用して状態を保存する
+- navScreen: ルート画面のBackStackEntryを利用して状態を保存する
 
 ```kotlin
 // sample - space:
-class HelloSpaceScreen : Screen {
-
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        AtomRoot(
-            currentScreen to rememberScreenStore(),
-            navScreen to navigator.rememberNavigatorScreenStore(),
-            fallbackScope = { currentScreen }
-        ) {
-            // ..
-        }
+@Composable
+fun HelloSpaceScreen(
+    navStore: AtomStore
+) {
+    AtomRoot(
+        currentScreen to rememberViewModelStore(),
+        navScreen to navStore,
+        fallbackScope = { currentScreen }
+        // If fallbackScope is set to navScreen, the value of Counter is preserved even if it navigates back and then forward again.
+        // fallbackScope = { navScreen }
+    ) {
+        HelloSpaceContent(
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
 ```
@@ -133,7 +136,7 @@ UI上で表現したい状態には、コンポーネントの内部状態から
 
 Space の基本的な使い方は理解できましたか？ これでチュートリアルは完了です :confetti_ball:
 
-学習を続けたい場合は、[sample](https://github.com/soil-kt/soil/tree/main/sample/) コード内の `SpaceScreen` を動かしてみるのがよいでしょう。
+学習を続けたい場合は、[sample](https://github.com/soil-kt/soil/tree/1.0.0-alpha02/sample/) コード内の `SpaceScreen` を動かしてみるのがよいでしょう。
 ぜひ、試して気になるところがあれば [Github discussions](https://github.com/soil-kt/soil/discussions) にフィードバックをお寄せください。
 
 Soil プロジェクトに興味がありますか？<br/>

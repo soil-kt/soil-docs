@@ -104,24 +104,27 @@ val counter2Atom = atom(0, saverKey = "counter2", navGraphScope)
 In Step 3, only one `AtomStore` was specified as an argument for `AtomRoot`.
 Multiple `AtomStore` and a `fallbackScope` can also be passed as variations of arguments for `AtomRoot`.
 
-The following code utilizes two types of scopes that depend on the lifecycle of the navigation library [Voyager](https://github.com/adrielcafe/voyager), used in the sample app. With Voyager, you can manage states on a per-screen basis and across the entire navigation.
+The following code is an example managing state with two different scopes that depend on the `NavBackStackEntry` of the navigation library [androidx.Navigation](https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-navigation-routing.html) used in the sample app:
 
-- [ScreenModel | Voyager](https://voyager.adriel.cafe/screenmodel)
+- currentScreen: Saves the state using the `BackStackEntry` of the current screen
+- navScreen: Saves the state using the `BackStackEntry` of the root screen
 
 ```kotlin
 // sample - space:
-class HelloSpaceScreen : Screen {
-
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        AtomRoot(
-            currentScreen to rememberScreenStore(),
-            navScreen to navigator.rememberNavigatorScreenStore(),
-            fallbackScope = { currentScreen }
-        ) {
-            // ..
-        }
+@Composable
+fun HelloSpaceScreen(
+    navStore: AtomStore
+) {
+    AtomRoot(
+        currentScreen to rememberViewModelStore(),
+        navScreen to navStore,
+        fallbackScope = { currentScreen }
+        // If fallbackScope is set to navScreen, the value of Counter is preserved even if it navigates back and then forward again.
+        // fallbackScope = { navScreen }
+    ) {
+        HelloSpaceContent(
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
 ```
@@ -135,7 +138,7 @@ Managing all these states within a single scope can be a strict constraint from 
 
 Have you understood the basics of using Space? This concludes the tutorial :confetti_ball:
 
-If you wish to continue learning, it would be a good idea to try running the `SpaceScreen` found in the [sample](https://github.com/soil-kt/soil/tree/main/sample/) code.
+If you wish to continue learning, it would be a good idea to try running the `SpaceScreen` found in the [sample](https://github.com/soil-kt/soil/tree/1.0.0-alpha02/sample/) code.
 If you have any concerns, please feel free to provide feedback on [Github discussions](https://github.com/soil-kt/soil/discussions).
 
 Love the project? :star: it on [GitHub](https://github.com/soil-kt/soil) and help us make it even better!
