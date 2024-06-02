@@ -7,7 +7,7 @@ Soil の Kotlin Multiplatform ライブラリは、実験的な [Kotlin Wasm](ht
 
 :point_right: [Sample App](https://play.soil-kt.com/)
 
-Source code: <https://github.com/soil-kt/soil/tree/main/sample/>
+Source code: <https://github.com/soil-kt/soil/tree/1.0.0-alpha02/sample/>
 
 ::: info ブラウザの WasmGC 対応状況について
 現在、WasmGC に対応しているブラウザは Chrome と Firefox のみです。
@@ -37,7 +37,7 @@ repositories {
 
 ```kts [Dependencies]
 dependencies {
-    val soil = "1.0.0-alpha01"
+    val soil = "1.0.0-alpha02"
     implementation("com.soil-kt.soil:query-core:$soil")
     implementation("com.soil-kt.soil:query-compose:$soil")
     implementation("com.soil-kt.soil:query-compose-runtime:$soil")
@@ -48,7 +48,7 @@ dependencies {
 
 ```yaml [Version Catalog]
 [versions]
-soil = "1.0.0-alpha01"
+soil = "1.0.0-alpha02"
 
 [libraries]
 soil-query-core = { module = "com.soil-kt.soil:query-core", version.ref = "soil" }
