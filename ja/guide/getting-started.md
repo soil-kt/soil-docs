@@ -7,7 +7,7 @@ Soil の Kotlin Multiplatform ライブラリは、実験的な [Kotlin Wasm](ht
 
 :point_right: [Sample App](https://play.soil-kt.com/)
 
-Source code: <https://github.com/soil-kt/soil/tree/1.0.0-alpha04/sample/>
+Source code: <https://github.com/soil-kt/soil/tree/1.0.0-alpha05/sample/>
 
 ::: info ブラウザの WasmGC 対応状況について
 現在、WasmGC に対応しているブラウザは Chrome と Firefox のみです。
@@ -37,24 +37,45 @@ repositories {
 
 ```kts [Dependencies]
 dependencies {
-    val soil = "1.0.0-alpha04"
+    val soil = "1.0.0-alpha05"
+
+    // Query
     implementation("com.soil-kt.soil:query-core:$soil")
+    // Query utilities for Compose
     implementation("com.soil-kt.soil:query-compose:$soil")
+    // optional - helpers for Compose
     implementation("com.soil-kt.soil:query-compose-runtime:$soil")
+    // optional - receivers for Ktor (3.0.0-beta-2)
+    implementation("com.soil-kt.soil:query-receivers-ktor:$soil")
+    // optional - Test helpers
+    testImplementation("com.soil-kt.soil:query-test:$soil")
+
+    // Form
     implementation("com.soil-kt.soil:form:$soil")
+
+    // Space
     implementation("com.soil-kt.soil:space:$soil")
 }
 ```
 
 ```yaml [Version Catalog]
 [versions]
-soil = "1.0.0-alpha04"
+soil = "1.0.0-alpha05"
 
 [libraries]
+# Query
 soil-query-core = { module = "com.soil-kt.soil:query-core", version.ref = "soil" }
+# Query utilities for Compose
 soil-query-compose = { module = "com.soil-kt.soil:query-compose", version.ref = "soil" }
+# optional - helpers for Compose
 soil-query-compose-runtime = { module = "com.soil-kt.soil:query-compose-runtime", version.ref = "soil" }
+# optional - receivers for Ktor (3.0.0-beta-2)
+soil-query-receivers-ktor = { module = "com.soil-kt.soil:query-receivers-ktor", version.ref = "soil" }
+# optional - Test helpers
+soil-query-test = { module = "com.soil-kt.soil:query-test", version.ref = "soil" }
+# Form
 soil-form = { module = "com.soil-kt.soil:form", version.ref = "soil" }
+# Space
 soil-space = { module = "com.soil-kt.soil:space", version.ref = "soil" }
 ```
 

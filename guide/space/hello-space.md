@@ -138,7 +138,7 @@ Managing all these states within a single scope can be a strict constraint from 
 
 Have you understood the basics of using Space? This concludes the tutorial :confetti_ball:
 
-If you wish to continue learning, it would be a good idea to try running the `SpaceScreen` found in the [sample](https://github.com/soil-kt/soil/tree/1.0.0-alpha04/sample/) code.
+If you wish to continue learning, it would be a good idea to try running the `SpaceScreen` found in the [sample](https://github.com/soil-kt/soil/tree/1.0.0-alpha05/sample/) code.
 If you have any concerns, please feel free to provide feedback on [Github discussions](https://github.com/soil-kt/soil/discussions).
 
 Love the project? :star: it on [GitHub](https://github.com/soil-kt/soil) and help us make it even better!

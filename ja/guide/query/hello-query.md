@@ -178,13 +178,16 @@ private val swrClient = SwrCache(
 class HelloQueryKey : QueryKey<String> by buildQueryKey(
     id = QueryId("demo/hello-query"),
     fetch = { /* .. */ },
-    options = QueryOptions(
-        staleTime = Duration.ZERO,
-        gcTime = 5.minutes,
-        keepAliveTime = 5.seconds,
-        // ..
-    )
-)
+) {
+    override fun onConfigureOptions(): QueryOptionsOverride = {
+        it.copy(
+            staleTime = Duration.ZERO,
+            gcTime = 5.minutes,
+            keepAliveTime = 5.seconds,
+            // ..
+        )
+    }
+}
 ```
 
 `QueryOptions` の重要な設定値は、以下の3つです。
@@ -197,7 +200,7 @@ class HelloQueryKey : QueryKey<String> by buildQueryKey(
 
 Query の基本的な使い方は理解できましたか？ これでチュートリアルは完了です :confetti_ball:
 
-学習を続けたい場合は、[sample](https://github.com/soil-kt/soil/tree/1.0.0-alpha04/sample/) コード内の `QueryScreen` を動かしてみるのがよいでしょう。
+学習を続けたい場合は、[sample](https://github.com/soil-kt/soil/tree/1.0.0-alpha05/sample/) コード内の `QueryScreen` を動かしてみるのがよいでしょう。
 ぜひ、試して気になるところがあれば [Github discussions](https://github.com/soil-kt/soil/discussions) にフィードバックをお寄せください。
 
 Soil プロジェクトに興味がありますか？<br/>
