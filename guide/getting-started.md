@@ -7,7 +7,7 @@ If your browser supports [WasmGC](https://github.com/WebAssembly/gc), you can ru
 
 :point_right: [Sample App](https://play.soil-kt.com/)
 
-Source code: <https://github.com/soil-kt/soil/tree/1.0.0-alpha05/sample/>
+Source code: <https://github.com/soil-kt/soil/tree/1.0.0-alpha06/sample/>
 
 ::: info Browser Support for WasmGC
 Currently, the only browsers that support WasmGC are Chrome and Firefox. 
@@ -38,7 +38,7 @@ repositories {
 
 ```kts [Dependencies]
 dependencies {
-    val soil = "1.0.0-alpha05"
+    val soil = "1.0.0-alpha06"
 
     // Query
     implementation("com.soil-kt.soil:query-core:$soil")
@@ -46,7 +46,7 @@ dependencies {
     implementation("com.soil-kt.soil:query-compose:$soil")
     // optional - helpers for Compose
     implementation("com.soil-kt.soil:query-compose-runtime:$soil")
-    // optional - receivers for Ktor (3.0.0-beta-2)
+    // optional - receivers for Ktor (3.x)
     implementation("com.soil-kt.soil:query-receivers-ktor:$soil")
     // optional - Test helpers
     testImplementation("com.soil-kt.soil:query-test:$soil")
@@ -61,7 +61,7 @@ dependencies {
 
 ```yaml [Version Catalog]
 [versions]
-soil = "1.0.0-alpha05"
+soil = "1.0.0-alpha06"
 
 [libraries]
 # Query
@@ -70,7 +70,7 @@ soil-query-core = { module = "com.soil-kt.soil:query-core", version.ref = "soil"
 soil-query-compose = { module = "com.soil-kt.soil:query-compose", version.ref = "soil" }
 # optional - helpers for Compose
 soil-query-compose-runtime = { module = "com.soil-kt.soil:query-compose-runtime", version.ref = "soil" }
-# optional - receivers for Ktor (3.0.0-beta-2)
+# optional - receivers for Ktor (3.x)
 soil-query-receivers-ktor = { module = "com.soil-kt.soil:query-receivers-ktor", version.ref = "soil" }
 # optional - Test helpers
 soil-query-test = { module = "com.soil-kt.soil:query-test", version.ref = "soil" }
