@@ -136,7 +136,7 @@ UI上で表現したい状態には、コンポーネントの内部状態から
 
 Space の基本的な使い方は理解できましたか？ これでチュートリアルは完了です :confetti_ball:
 
-学習を続けたい場合は、[sample](https://github.com/soil-kt/soil/tree/1.0.0-alpha06/sample/) コード内の `SpaceScreen` を動かしてみるのがよいでしょう。
+学習を続けたい場合は、[sample](https://github.com/soil-kt/soil/tree/1.0.0-alpha07/sample/) コード内の `SpaceScreen` を動かしてみるのがよいでしょう。
 ぜひ、試して気になるところがあれば [Github discussions](https://github.com/soil-kt/soil/discussions) にフィードバックをお寄せください。
 
 Soil プロジェクトに興味がありますか？<br/>
