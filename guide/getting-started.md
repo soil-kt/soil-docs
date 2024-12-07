@@ -42,9 +42,9 @@ dependencies {
 
     // Query
     implementation("com.soil-kt.soil:query-core:$soil")
-    // Query utilities for Compose
+    // Query for Compose
     implementation("com.soil-kt.soil:query-compose:$soil")
-    // optional - helpers for Compose
+    // optional - experimental helpers for Compose
     implementation("com.soil-kt.soil:query-compose-runtime:$soil")
     // optional - receivers for Ktor (3.x)
     implementation("com.soil-kt.soil:query-receivers-ktor:$soil")
@@ -66,9 +66,9 @@ soil = "1.0.0-alpha08"
 [libraries]
 # Query
 soil-query-core = { module = "com.soil-kt.soil:query-core", version.ref = "soil" }
-# Query utilities for Compose
+# Query for Compose
 soil-query-compose = { module = "com.soil-kt.soil:query-compose", version.ref = "soil" }
-# optional - helpers for Compose
+# optional - experimental helpers for Compose
 soil-query-compose-runtime = { module = "com.soil-kt.soil:query-compose-runtime", version.ref = "soil" }
 # optional - receivers for Ktor (3.x)
 soil-query-receivers-ktor = { module = "com.soil-kt.soil:query-receivers-ktor", version.ref = "soil" }

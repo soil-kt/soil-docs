@@ -2,6 +2,8 @@
 
 Learn the basics of using Query.
 If you haven't completed the [setup](/guide/getting-started.html#download) yet, please do so before proceeding.
+This tutorial uses the *query-core*, *query-compose*, and *query-receivers-ktor* packages.
+
 
 ## Step 1 - SwrClientProvider
 
@@ -27,6 +29,7 @@ It is possible to create multiple SwrClients and use them separately for differe
 but since data fetching and cache management, among many other features, are handled at this client level, it is not recommended.
 :::
 
+
 ## Step 2 - QueryKey
 
 To execute asynchronous data processing through Query, defining a Key is necessary.
@@ -43,12 +46,18 @@ class HelloQueryKey : QueryKey<String> by buildQueryKey(
 ```
 
 ::: tip
-There are currently three types of Keys:
+Currently, there are three types of `Key`:
 
 - `QueryKey<T>`
 - `InfiniteQueryKey<T, S>`
 - `MutationKey<T, S>`
+
+*Note: If you use the experimental `SwrCachePlus` instead of `SwrCache`, an additional type will be available:*
+
+- `SubscriptionKey<T>`
+
 :::
+
 
 ## Step 3 - Remember API
 
@@ -76,49 +85,7 @@ Did it display `Hello, Query!` 2 seconds after execution? Congratulations :tada:
 The return value of the Remember API is a sealed class, so you can determine the query state.
 
 
-## Step 4 - Compose Runtime
-
-In the previous step, we manually handled the query state, 
-but now let's introduce the query.compose.runtime package, which is Compose-first.
-
-``` kotlin
-@Composable
-fun App() {
-    SwrClientProvider(client = swrClient) {
-        MaterialTheme {
-            ErrorBoundary(fallback = { Text("Error :(") }) {
-                Suspense(fallback = { Text("Loading...") }) {
-                    val key = remember { HelloQueryKey() }
-                    val query = rememberQuery(key)
-                    Await(query) { result ->
-                        Text(result)
-                    }
-                    Catch(query) { e ->
-                        // Custom error handling
-                        // if (e is MyCustomError) {
-                        //    ...
-                        // }
-                        Throw(e)
-                    }
-                }
-            }
-        }
-    }
-}
-```
-
-This setup allows for flexible control over multiple query states on a component basis, 
-and commonalizes error and loading control on higher components within the screen.
-
-::: tip
-Internally, the following components collaborate automatically to control according to the query states below:
-
-- `Suspense <- Await#1(query1, query2, ..), Await#2(query1, query2, ..)`
-- `ErrorBoundary <- Catch#1(query1, query2, ..), Catch#2(query1, query2, ..)`
-:::
-
-
-## Step 5 - QueryReceiver
+## Step 4 - QueryReceiver
 
 In Step 2, we defined a Key and directly wrote the return value within the `fetch` function block. 
 However, Query itself does not have an interface for fetching remote data. 
@@ -133,32 +100,55 @@ There are three ways to refer to external instances within the `fetch` block:
 Here, let's use `QueryReceiver` which can be passed only during the generation of `SwrClient` as one of the options of `SwrCachePolicy`.
 
 ```kotlin
-class KtorReceiver(
-    val client: HttpClient
-) : QueryReceiver
-
 private val swrClient = SwrCache(
     policy = SwrCachePolicy(
         coroutineScope = SwrCacheScope(),
-        queryReceiver = KtorReceiver(client = createHttpClient())
+        queryReceiver = QueryReceiver { 
+            httpClient = createHttpClient()
+        }
     )
 )
 ```
 
+::: tip
+httpClient is an extension property provided by the *query-receivers-ktor* package.
+You can include custom instances in the Receiver type by creating instances using `ContextPropertyKey` and defining extension properties. 
+:::
+
 Inside Query, the `fetch` function block is invoked as [Extension functions](https://kotlinlang.org/docs/extensions.html#extension-functions) of `QueryReceiver`.
-Therefore, a type conversion to the intended receiver type is necessary within the `fetch` function block.
+Here, instead of using `buildQueryKey`, let's use `buildKtorQueryKey`.
+This allows the `HttpClient` instance passed in `SwrCachePolicy` to act as the Receiver type of the `fetch` function block.
 
 ```kotlin
-class HelloQueryKey : QueryKey<String> by buildQueryKey(
+class HelloQueryKey : QueryKey<String> by buildKtorQueryKey(
     id = QueryId("demo/hello-query"),
-    fetch = {
-        this as KtorReceiver
-        client.get("https://httpbin.org/headers").bodyAsText()
+    fetch = { // HttpClient.() -> String
+        get("https://httpbin.org/headers").bodyAsText()
     }
 )
 ```
 
-## Step 6 - QueryOptions
+To understand how `QueryReceiver` is processed within the function, let’s look at the function definition of `buildKtorQueryKey` provided by the *query-receivers-ktor* package.
+This function is defined as an inline function wrapping the `buildQueryKey` function.
+It references the `httpClient` extension property from `QueryReceiver` and provides a `fetch` block with `HttpClient` as its Receiver type instead of `QueryReceiver`.
+
+```kotlin
+inline fun <T> buildKtorQueryKey(
+    id: QueryId<T>,
+    crossinline fetch: suspend HttpClient.() -> T
+): QueryKey<T> = buildQueryKey(
+    id = id,
+    fetch = {
+        val client = checkNotNull(httpClient) { "httpClient isn't available. Did you forget to set it up?" }
+        with(client) { fetch() }
+    }
+)
+```
+
+By utilizing `QueryReceiver`, you can build a flexible mechanism to pass external resource client instances through custom extension property definitions.
+
+
+## Step 5 - QueryOptions
 
 The data fetched by Query is briefly mentioned in [What is Soil?](/guide/what-is-soil.md), and is managed through a stale-while-revalidate mechanism for refetching and caching.
 Settings that can be adjusted for the entire `SwrClient` or for each Key are included in `QueryOptions`.

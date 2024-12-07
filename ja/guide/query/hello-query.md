@@ -2,6 +2,8 @@
 
 Query の基本的な使い方を身につけましょう。
 [セットアップ](/ja/guide/getting-started.html#download) がまだ完了していない場合は事前に実施してください。
+このチュートリアルでは、*query-core* と *query-compose* と *query-receivers-ktor* パッケージを使います。
+
 
 ## Step 1 - SwrClientProvider
 
@@ -26,6 +28,7 @@ fun App() {
 SwrClient を複数作成して、画面ごとに分けることも可能ですが、データフェッチングやキャッシュ管理、他多数の機能がこの Client 単位で行なわれますので、オススメはしません。
 :::
 
+
 ## Step 2 - QueryKey
 
 Query を通じて、非同期データ処理を実行するには Key の定義が必要になります。
@@ -47,7 +50,13 @@ Key は現在3つのタイプが存在します。
 - `QueryKey<T>`
 - `InfiniteQueryKey<T, S>`
 - `MutationKey<T, S>`
+
+※SwrCacheの代わりに、実験的なSwrCachePlusを利用すると、もう1つのタイプが加わります。
+
+- `SubscriptionKey<T>`
+
 :::
+
 
 ## Step 3 - Remember API
 
@@ -75,47 +84,7 @@ fun App() {
 Remember APIの戻り値は、sealed class なので query 状態を判断することが可能です。
 
 
-## Step 4 - Compose Runtime
-
-1つ前の Step では自前で query 状態を処理しましたが、Compose-first な `query.compose.runtime` パッケージを用意しています。
-
-``` kotlin
-@Composable
-fun App() {
-    SwrClientProvider(client = swrClient) {
-        MaterialTheme {
-            ErrorBoundary(fallback = { Text("Error :(") }) {
-                Suspense(fallback = { Text("Loading...") }) {
-                    val key = remember { HelloQueryKey() }
-                    val query = rememberQuery(key)
-                    Await(query) { result ->
-                        Text(result)
-                    }
-                    Catch(query) { e ->
-                        // Custom error handling
-                        // if (e is MyCustomError) {
-                        //    ...
-                        // }
-                        Throw(e)
-                    }
-                }
-            }
-        }
-    }
-}
-```
-
-コンポーネントベースで複数の query 状態を柔軟に制御し、画面上のエラー制御やローディング制御をより上位のコンポーネントで共通化できます。
-
-::: tip
-内部では次のコンポーネント同士が連携して自動的に配下の query 状態に応じて、制御が行われます。
-
-- `Suspense <- Await#1(query1, query2, ..), Await#2(query1, query2, ..)`
-- `ErrorBoundary <- Catch#1(query1, query2, ..), Catch#2(query1, query2, ..)`
-:::
-
-
-## Step 5 - QueryReceiver
+## Step 4 - QueryReceiver
 
 Step 2 で、Key を定義しましたが、 `fetch` 関数ブロック内で直接的に戻り値を書いていました。
 Query 自体には、リモートデータを取得する I/F を持っていません。そのため、実用的なコードでは HTTP クライアントなど、外部インスタンスを参照する必要があります。
@@ -130,32 +99,54 @@ Query 自体には、リモートデータを取得する I/F を持っていま
 `QueryReceiver` は、Step 1 で指定した `SwrClient` の生成時にのみ渡すことができる `SwrCachePolicy` のオプションの1つです。
 
 ```kotlin
-class KtorReceiver(
-    val client: HttpClient
-) : QueryReceiver
-
 private val swrClient = SwrCache(
     policy = SwrCachePolicy(
         coroutineScope = SwrCacheScope(),
-        queryReceiver = KtorReceiver(client = createHttpClient())
+        queryReceiver = QueryReceiver { 
+            httpClient = createHttpClient()
+        }
     )
 )
 ```
 
-Query 内部では、`QueryReceiver` の [Extension functions](https://kotlinlang.org/docs/extensions.html#extension-functions) として `fetch` 関数ブロックを呼び出します。
-そのため、`fetch` 関数ブロック内で意図する receiver type として型変換が必要になります。
+::: tip
+httpClientは、*query-receivers-ktor* パッケージが提供するレシーバ型の拡張プロパティです。
+`ContextPropertyKey` で独自の型を渡すためのインスタンスを生成し、拡張プロパティを定義することで任意のインスタンスをレシーバ型へ含めることが可能になります。
+:::
+
+Query 内部では、`QueryReceiver` の [Extension functions](https://kotlinlang.org/docs/extensions.html#extension-functions) として `fetch` 関数ブロックを呼び出します。 ここでは、`buildQueryKey` の代わりに `buildKtorQueryKey` を利用してみます。
+すると `SwrCachePolicy` で渡したHttpClientインスタンスが `fetch` 関数ブロックのレシーバ型になりました。
 
 ```kotlin
-class HelloQueryKey : QueryKey<String> by buildQueryKey(
+class HelloQueryKey : QueryKey<String> by buildKtorQueryKey(
     id = QueryId("demo/hello-query"),
-    fetch = {
-        this as KtorReceiver
-        client.get("https://httpbin.org/headers").bodyAsText()
+    fetch = { // HttpClient.() -> String
+        get("https://httpbin.org/headers").bodyAsText()
     }
 )
 ```
 
-## Step 6 - QueryOptions
+関数内で `QueryReceiver` がどのように処理されているか、*query-receivers-ktor* パッケージが提供する `buildKtorQueryKey` の関数定義を調べてみましょう。
+この関数は、 `buildQueryKey` 関数をラップしたインライン関数として定義されています。
+`QueryReceiver` から `httpClient` 拡張プロパティを参照し、`QueryReceiver` の代わりに `HttpClient` をレシーバ型にした `fetch` ブロックを提供しています。
+
+```kotlin
+inline fun <T> buildKtorQueryKey(
+    id: QueryId<T>,
+    crossinline fetch: suspend HttpClient.() -> T
+): QueryKey<T> = buildQueryKey(
+    id = id,
+    fetch = {
+        val client = checkNotNull(httpClient) { "httpClient isn't available. Did you forget to set it up?" }
+        with(client) { fetch() }
+    }
+)
+```
+
+このように `QueryReceiver` を利用すると、独自の拡張プロパティ定義で柔軟に外部リソースクライアントのインスタンスを渡す仕組みを構築できます。
+
+
+## Step 5 - QueryOptions
 
 Queryの取得済みデータは、[What is Soil?](/ja/guide/what-is-soil.md) で少し触れていますが、 stale-while-revalidate の仕組みで再フェッチやキャッシングが行なわれています。
 全体の `SwrClient` または各 Key で調整できる設定値が `QueryOptions` に含まれています。
@@ -195,6 +186,7 @@ class HelloQueryKey : QueryKey<String> by buildQueryKey(
 - **staleTime** - `fetch` 関数ブロックを正常終了した戻り値を *stale* と見なすまでの経過期間
 - **gcTime** - Key の戻り値がどこからも参照がない *inactive* 状態になると保持期間の間はメモリキャッシュへ一時待避される
 - **keepAliveTime** - どこからも参照がなくなったときに一定時間 *active* 状態をキープするための維持期間
+
 
 ## Finish :checkered_flag:
 
