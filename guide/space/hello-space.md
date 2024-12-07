@@ -2,6 +2,7 @@
 
 Learn the basics of using Space.
 If you haven't completed the [setup](/guide/getting-started.html#download) yet, please do so before proceeding.
+This tutorial uses the *space* package.
 
 
 ## Step 1 - Atom

@@ -2,6 +2,8 @@
 
 Space の基本的な使い方を身につけましょう。
 [セットアップ](/ja/guide/getting-started.html#download) がまだ完了していない場合は事前に実施してください。
+このチュートリアルでは、*space* パッケージを使います。
+
 
 ## Step 1 - Atom
 

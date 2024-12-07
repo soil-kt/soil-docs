@@ -2,6 +2,7 @@
 
 Learn the basics of using Form.
 If you haven't completed the [setup](/guide/getting-started.html#download) yet, please do so before proceeding.
+This tutorial uses the *form* package.
 
 
 ## Step 1 - FormScope
