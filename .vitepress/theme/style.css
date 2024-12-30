@@ -4,6 +4,67 @@
  */
 
 /**
+ * Colors: Palette
+ *
+ * The primitive colors used for accent colors. These colors are referenced
+ * by functional colors such as "Text", "Background", or "Brand".
+ *
+ * Each colors have exact same color scale system with 3 levels of solid
+ * colors with different brightness, and 1 soft color.
+ *
+ * - `XXX-1`: The most solid color used mainly for colored text. It must
+ *   satisfy the contrast ratio against when used on top of `XXX-soft`.
+ *
+ * - `XXX-2`: The color used mainly for hover state of the button.
+ *
+ * - `XXX-3`: The color for solid background, such as bg color of the button.
+ *    It must satisfy the contrast ratio with pure white (#ffffff) text on
+ *    top of it.
+ *
+ * - `XXX-soft`: The color used for subtle background such as custom container
+ *    or badges. It must satisfy the contrast ratio when putting `XXX-1` colors
+ *    on top of it.
+ *
+ *    The soft color must be semi transparent alpha channel. This is crucial
+ *    because it allows adding multiple "soft" colors on top of each other
+ *    to create a accent, such as when having inline code block inside
+ *    custom containers.
+ * -------------------------------------------------------------------------- */
+
+:root {
+  --vp-c-gray-1: #5F5F5F;
+  --vp-c-gray-2: #777777;
+  --vp-c-gray-3: #8F8F8F;
+  --vp-c-gray-soft: rgba(179, 179, 179, 0.14);
+
+  --vp-c-indigo-1: #162989;
+  --vp-c-indigo-2: #1A2F99;
+  --vp-c-indigo-3: #1E35AA;
+  --vp-c-indigo-soft: rgba(34, 59, 188, 0.14);
+
+  --vp-c-purple-1: #4E2B8B;
+  --vp-c-purple-2: #5A339E;
+  --vp-c-purple-3: #663AB3;
+  --vp-c-purple-soft: rgba(111, 64, 194, 0.14);
+
+  --vp-c-green-1: #3C8041;
+  --vp-c-green-2: #4EA254;
+  --vp-c-green-3: #5FC567;
+  --vp-c-green-soft: rgba(107, 218, 115, 0.14);
+
+  --vp-c-yellow-1: #7A582E;
+  --vp-c-yellow-2: #93703B;
+  --vp-c-yellow-3: #AE8848;
+  --vp-c-yellow-soft: rgba(206, 161, 86, 0.14);
+
+  --vp-c-red-1: #862E2C;
+  --vp-c-red-2: #9C3634;
+  --vp-c-red-3: #B23F3D;
+  --vp-c-red-soft: rgba(197, 71, 68, 0.14);
+}
+
+
+/**
  * Colors: Background
  *
  * - `bg`: The bg color used for main screen.
@@ -20,11 +81,31 @@
 
  :root {
     --vp-c-bg: #FFF9F0;
-    --vp-c-bg-alt: #F7F3EB;
+    --vp-c-bg-alt: #F8F2E9;
     --vp-c-bg-soft: rgba(217, 217, 217, 0.2); /* #D9D9D9 */
  }
 
- /**
+/**
+ * Colors: Borders
+ *
+ * - `divider`: This is used for separators. This is used to divide sections
+ *   within the same components, such as having separator on "h2" heading.
+ *
+ * - `border`: This is designed for borders on interactive components.
+ *   For example this should be used for a button outline.
+ *
+ * - `gutter`: This is used to divide components in the page. For example
+ *   the header and the lest of the page.
+ * -------------------------------------------------------------------------- */
+
+ :root {
+  --vp-c-border: #C4C2BF;
+  --vp-c-divider: #E3E2E1;
+  --vp-c-gutter: #E3E2E1;
+}
+
+
+/**
  * Colors: Text
  *
  * - `text-1`: Used for primary text.
@@ -41,7 +122,7 @@
  }
 
 
- /**
+/**
  * Colors: Function
  *
  * - `default`: The color used purely for subtle indication without any
@@ -63,15 +144,15 @@
  * -------------------------------------------------------------------------- */
 
  :root {
-    --vp-c-brand-1: #82540E;
-    --vp-c-brand-2: #A07C46;
-    --vp-c-brand-3: #BEA47C;
-    --vp-c-brand-soft: rgba(255, 165, 27, 0.14);
+    --vp-c-brand-1: #7A582E;
+    --vp-c-brand-2: #93703B;
+    --vp-c-brand-3: #AE8848;
+    --vp-c-brand-soft: rgba(206, 161, 86, 0.14);
 
-    --vp-c-brand-alt-1: #54AF5B;
-    --vp-c-brand-alt-2: #5BBD62;
-    --vp-c-brand-alt-3: #62CC6A;
-    --vp-c-brand-alt-soft: rgba(122, 255, 133, 0.14);  
+    --vp-c-brand-alt-1: #3C8041;
+    --vp-c-brand-alt-2: #4EA254;
+    --vp-c-brand-alt-3: #5FC567;
+    --vp-c-brand-alt-soft: rgba(107, 218, 115, 0.14);
 
     --vp-c-tip-1: var(--vp-c-purple-1);
     --vp-c-tip-2: var(--vp-c-purple-2);
