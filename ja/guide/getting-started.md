@@ -7,12 +7,7 @@ Soil の Kotlin Multiplatform ライブラリは、実験的な [Kotlin Wasm](ht
 
 :point_right: [Sample App](https://play.soil-kt.com/)
 
-Source code: <https://github.com/soil-kt/soil/tree/1.0.0-alpha09/sample/>
-
-::: info ブラウザの WasmGC 対応状況について
-現在、WasmGC に対応しているブラウザは Chrome と Firefox のみです。
-最新の対応状況は https://webassembly.org/features/ を確認してください。
-:::
+Source code: <https://github.com/soil-kt/soil/tree/1.0.0-alpha10/sample/>
 
 
 ## Download
@@ -37,14 +32,12 @@ repositories {
 
 ```kts [Dependencies]
 dependencies {
-    val soil = "1.0.0-alpha09"
+    val soil = "1.0.0-alpha10"
 
     // Query
     implementation("com.soil-kt.soil:query-core:$soil")
     // Query for Compose
     implementation("com.soil-kt.soil:query-compose:$soil")
-    // optional - experimental helpers for Compose
-    implementation("com.soil-kt.soil:query-compose-runtime:$soil")
     // optional - receivers for Ktor (3.x)
     implementation("com.soil-kt.soil:query-receivers-ktor:$soil")
     // optional - Test helpers
@@ -55,20 +48,23 @@ dependencies {
 
     // Space
     implementation("com.soil-kt.soil:space:$soil")
+
+    // Experimental
+    implementation("com.soil-kt.soil:lazyload:$soil")
+    implementation("com.soil-kt.soil:optimistic-update:$soil")
+    implementation("com.soil-kt.soil:reacty:$soil")
 }
 ```
 
 ```yaml [Version Catalog]
 [versions]
-soil = "1.0.0-alpha09"
+soil = "1.0.0-alpha10"
 
 [libraries]
 # Query
 soil-query-core = { module = "com.soil-kt.soil:query-core", version.ref = "soil" }
 # Query for Compose
 soil-query-compose = { module = "com.soil-kt.soil:query-compose", version.ref = "soil" }
-# optional - experimental helpers for Compose
-soil-query-compose-runtime = { module = "com.soil-kt.soil:query-compose-runtime", version.ref = "soil" }
 # optional - receivers for Ktor (3.x)
 soil-query-receivers-ktor = { module = "com.soil-kt.soil:query-receivers-ktor", version.ref = "soil" }
 # optional - Test helpers
@@ -77,6 +73,10 @@ soil-query-test = { module = "com.soil-kt.soil:query-test", version.ref = "soil"
 soil-form = { module = "com.soil-kt.soil:form", version.ref = "soil" }
 # Space
 soil-space = { module = "com.soil-kt.soil:space", version.ref = "soil" }
+# Experimental
+soil-lazyload = { module = "com.soil-kt.soil:lazyload", version.ref = "soil" }
+soil-optimistic-update = { module = "com.soil-kt.soil:optimistic-update", version.ref = "soil" }
+soil-reacty = { module = "com.soil-kt.soil:reacty", version.ref = "soil" }
 ```
 
 :::
