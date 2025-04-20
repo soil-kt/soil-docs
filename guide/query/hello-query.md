@@ -128,7 +128,7 @@ class HelloQueryKey : QueryKey<String> by buildKtorQueryKey(
 )
 ```
 
-To understand how `QueryReceiver` is processed within the function, let’s look at the function definition of `buildKtorQueryKey` provided by the *query-receivers-ktor* package.
+To understand how `QueryReceiver` is processed within the function, let's look at the function definition of `buildKtorQueryKey` provided by the *query-receivers-ktor* package.
 This function is defined as an inline function wrapping the `buildQueryKey` function.
 It references the `httpClient` extension property from `QueryReceiver` and provides a `fetch` block with `HttpClient` as its Receiver type instead of `QueryReceiver`.
 
@@ -194,7 +194,7 @@ The key settings in `QueryOptions` are as follows:
 
 Have you understood the basics of using Query? This concludes the tutorial :confetti_ball:
 
-If you wish to continue learning, it would be a good idea to try running the `QueryScreen` found in the [sample](https://github.com/soil-kt/soil/tree/1.0.0-alpha09/sample/) code.
+If you wish to continue learning, try running the `QueryScreen` in the [sample](https://github.com/soil-kt/soil/tree/1.0.0-alpha10/sample/) code.
 If you have any concerns, please feel free to provide feedback on [Github discussions](https://github.com/soil-kt/soil/discussions).
 
 Love the project? :star: it on [GitHub](https://github.com/soil-kt/soil) and help us make it even better!
