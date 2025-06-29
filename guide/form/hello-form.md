@@ -2,200 +2,224 @@
 
 Learn the basics of using Form.
 If you haven't completed the [setup](/guide/getting-started.html#download) yet, please do so before proceeding.
-This tutorial uses the *form* package.
+This tutorial covers the *form* package.
 
 
-## Step 1 - FormScope
+## Step 1 - Form
 
-When using a Form, define a `Form` to manage the state and actions of input fields, and create a child block of `FormScope`.
+First, use the `rememberForm` API to obtain a `Form` instance that manages form values and the state of each input field.
 
 ```kotlin
 @Composable
 fun App() {
     MaterialTheme {
-        Form(
-            onSubmit = {
-                delay(2000)
-                println("onSubmit: $it")
-            },
+        val form = rememberForm(
             initialValue = "",
-            policy = FormPolicy.Minimal
-        ) { // this: FormScope<String>
-
-        }
+            onSubmit = { value ->
+                println("onSubmit: $value")
+            }
+        )
     }
 }
 ```
 
 The `Form` infers the type from `initialValue`.
-Here, to create a simple form containing a single text input field, the `initialValue` is set as a string type.
+In this example, we create a simple form containing a single text input field by setting the `initialValue` to a string type.
 
 ::: warning
-If you are expecting state restoration on the Android platform, please check if the type specified in `initialValue` is restorable.
-Inside the Form, `rememberSaveable` is used to manage input values, and runtime errors will be thrown from the API for unsupported types.
+If you expect state restoration on the Android platform, please ensure the type specified in `initialValue` is restorable.
+The Form internally uses `rememberSaveable` to manage form values, and runtime errors will be thrown for unsupported types.
 
 Reference: [RememberSaveable.kt;l=242](https://cs.android.com/androidx/platform/frameworks/support/+/d0c824e32f7ac2012d926e7dbc1fc246a72c9bae:compose/runtime/runtime-saveable/src/commonMain/kotlin/androidx/compose/runtime/saveable/RememberSaveable.kt;l=242)
 :::
 
 
-## Step 2 - FieldControl
+## Step 2 - FormField
 
-The association of the type specified in Form's `initialValue` with each field is defined using the Remember API that generates FieldControl. While there are several variations of the Remember API, here we use `rememberFieldRuleControl`.
+The association between the type specified in Form's `initialValue` and each field is defined using FormField generation APIs: `Form<T>.Field` or `Form<T>.rememberField`.
 
 ```kotlin
 @Composable
 fun App() {
     MaterialTheme {
-        Form(
-            onSubmit = { /* .. */ },
-            initialValue = "",
-            policy = FormPolicy.Minimal
-        ) { // this: FormScope<String>
-            Column {
-                val control = rememberFieldRuleControl(
-                    name = "email",
-                    select = { this }, // T.() -> V
-                    update = { it },   // T.(V) -> T
-                ) { // this: ValidationRuleBuilder<String>
+        val form = rememberForm(/* .. */)
+        
+        Column {
+            form.Field(
+                selector = { it },
+                updater = { it },
+                validator = FieldValidator {
                     notBlank { "must not be blank" }
+                },
+                render = { field -> // field: FormField<String>
+                    TextField(
+                        value = field.value,
+                        onValueChange = field::onValueChange,
+                        modifier = Modifier.onFocusChanged { state ->
+                            field.handleFocus(state.isFocused || state.hasFocus)
+                        },
+                        isError = field.hasError,
+                        supportingText = {
+                            if (field.hasError) {
+                                Text(text = field.error.messages.first(), color = MaterialTheme.colorScheme.error)
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            // When focus doesn't move to the next field, you need to manually trigger validation
+                            field.trigger(FieldValidationMode.Blur)
+                            defaultKeyboardAction(ImeAction.Done)
+                        })
+                    )
                 }
-                // ..
-            }
+            )
         }
     }
 }
 ```
 
+In this example, we use the headless component `Form<T>.Field` to connect the actual input component with the `FormField` interface.
+The `selector` extracts the field value from the form data, while the `updater` specifies how to update the form data when the field changes.
+
+The *form* package controls state and behavior but does not provide UI components. This allows maximum flexibility in designing your input components.
+
 ::: tip
-Built-in validation rules callable within the `ValidationRuleBuilder<T>` block are defined in [form.rule](https://github.com/soil-kt/soil/tree/main/soil-form/src/commonMain/kotlin/soil/form/rule).
-All validation rules are extension functions, so it is possible to define custom validation rules within your project and call them within this block.
+Built-in validation rules available within the `FieldValidator` block are defined in [form.rule](https://github.com/soil-kt/soil/tree/main/soil-form/src/commonMain/kotlin/soil/form/rule).
+All validation rules are extension functions, so you can define custom validation rules within your project and use them in the validator block.
 :::
 
 
-## Step 3 - Controller
+## Step 3 - Submit
 
-To minimize the impact of re-composition due to updates in input values, the `FieldControl` created in Step 2 is passed to a `Controller`, which then connects the actual input component with the `Field` interface. Here, we define `TextField` from Material3 as the UI component for input.
+Form submission is controlled using `Form<T>.handleSubmit` and can be combined with any component for flexible control.
 
 ```kotlin
 @Composable
 fun App() {
     MaterialTheme {
-        Form(
-            onSubmit = { /* .. */ },
+        val form = rememberForm(
             initialValue = "",
-            policy = FormPolicy.Minimal
-        ) { // this: FormScope<String>
-            Column {
-                val control = ..
-                Controller(control) { field -> // Field<String>
-                    TextField(
-                        value = field.value,
-                        onValueChange = field.onChange,
-                        placeholder = { Text(field.name) },
-                        modifier = Modifier.fillMaxWidth().onFocusChanged(field),
-                        enabled = field.isEnabled,
-                        isError = field.hasError,
-                        singleLine = true,
-                        supportingText = {
-                            if (field.hasError) {
-                                Text(text = field.errors.first(), color = MaterialTheme.colorScheme.error)
-                            }
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Next
-                        )
-                    )
-                }
+            onSubmit = { value -> 
+                // This will only be called if validation passes
+                println("onSubmit: $value") 
+            }
+        )
+        
+        Column {
+            // ..
+            
+            Button(
+                onClick = form::handleSubmit,
+                enabled = form.meta.canSubmit
+            ) {
+                Text("Submit")
             }
         }
     }
 }
 ```
 
-## Step 4 - SubmissionControl
+The `handleSubmit` function automatically validates all fields and calls the `onSubmit` callback only if validation passes.
+For controlling the submit button, `meta.canSubmit` is useful as it indicates whether the form is ready for submission based on validation rules and form state.
 
-Similar to `FieldControl` in Step 2, the association of the form submission button with the form input items is defined using the Remember API that generates `SubmissionControl`.
-The reason for using a `Controller` is the same as in Step 3, to minimize the impact of re-composition due to changes in the Submit state.
-
-```kotlin
-@Composable
-fun App() {
-    MaterialTheme {
-        Form(
-            onSubmit = { /* .. */ },
-            initialValue = "",
-            policy = FormPolicy.Minimal
-        ) {
-            Column {
-                // ..
-                Controller(control = rememberSubmissionRuleAutoControl()) { submission ->
-                    Button(
-                        onClick = submission.onSubmit,
-                        modifier = Modifier.focusable(),
-                        enabled = !submission.isSubmitting
-                    ) {
-                        Text("Submit")
-                    }
-                }
-            }
-        }
-    }
-}
-```
-
-The basic implementation of the form is complete with these steps. When the Submit button is pressed,
-validation errors will only occur if the input value is blank.
+::: info
+Button controls during submission (after `onSubmit` invocation) are outside the scope of the *form* package.
+Please effectively utilize processing states and other features provided by the *query* package's Mutation functionality.
+:::
 
 
-## Step 5 - FormPolicy
+## Step 4 - FormPolicy
 
-In the previous steps, we have been specifying `FormPolicy.Minimal`.
-`FormPolicy` includes several settings to adjust the timing of validation execution. We provide two presets as simple options:
-
-- **Default** - Automatically invokes validation based on input values after each input field loses focus.
-- **Minimal** - Automatically invokes validation based on input values after the submission button is clicked.
-
-By commenting out `policy` as in the following code and controlling the Button state with `submission.canSubmit`,
-the button can only be pressed when the validation rules are satisfied.
-
+You can fine-tune when and how validation is executed with `FormPolicy`.
 
 ```kotlin
 @Composable
 fun App() {
     MaterialTheme {
-        Form(
-            onSubmit = { /* .. */ },
+        val form = rememberForm(
             initialValue = "",
-            policy = FormPolicy.Minimal // [!code --]
-        ) {
-            Column {
-                // ..
-                Controller(control = rememberSubmissionRuleAutoControl()) { submission ->
-                    Button(
-                        onClick = submission.onSubmit,
-                        modifier = Modifier.focusable(),
-                        enabled = !submission.isSubmitting // [!code --]
-                        enabled = submission.canSubmit // [!code ++]
-                    ) {
-                        Text("Submit")
-                    }
-                    if (submission.isSubmitting) { // [!code ++]
-                        Text("Submitting...") // [!code ++]
-                    } // [!code ++]
-                }
+            policy = FormPolicy(
+                formOptions = FormOptions(
+                    preValidationDelayOnChange = 300.milliseconds
+                ),
+                fieldOptions = FieldOptions(
+                    validationStrategy = FieldValidationStrategy(
+                        initial = FieldValidationMode.Mount,
+                        next = { current, isValid ->
+                            if (isValid) FieldValidationMode.Blur else FieldValidationMode.Change
+                        }
+                    ),
+                    validationDelayOnChange = 300.milliseconds
+                )
+            ),
+            onSubmit = { value -> println("onSubmit: $value") }
+        )
+    }
+}
+```
+
+We provide preset policies to accommodate different UX requirements:
+
+- **FormPolicy()** (Default) - Executes initial validation when fields lose focus, then performs delayed validation on each field value change
+- **FormPolicy.Minimal** - Executes initial validation when the submit button is pressed (`meta.canSubmit` always returns `true`)
+
+
+## Step 5 - FormState
+
+In Step 1, we specified initial values directly in `rememberForm`.
+Using `FormState<T>` is helpful for more advanced scenarios or when integrating with external state management.
+
+```kotlin
+@Composable  
+fun App() {
+    MaterialTheme {
+        val formState = rememberFormState(
+            initialValue = ""
+        )
+        val formWithState = rememberForm(
+            state = formState,
+            onSubmit = { value -> 
+                println("onSubmit: $value")
+                formState.reset("")
             }
+        )
+        
+        // For mutable state types (like TextFieldState)
+        val nameState = rememberTextFieldState()
+        val emailState = rememberTextFieldState()
+        val formMeta = rememberFormMetaState()
+        val customFormState = remember(formMeta.key) {
+            FormState(
+                value = MutableFormData(name = nameState, email = emailState),
+                meta = formMeta
+            )
+        }
+        val customForm = rememberForm(
+            state = customFormState,
+            onSubmit = { value -> println("onSubmit: $value") }
+        )
+        
+        Column {
+            // Use any of the form instances created above
+            // ... fields and submit button
         }
     }
 }
 ```
+
+There are APIs that can only be called via FormState:
+
+- **reset**: Returns all state within the Form to its initial state
+- **setError**: Allows setting validation errors from outside the Form (e.g., reflecting validation errors from API submission results)
+
+For typical scenarios, the `rememberForm`-only approach is sufficient. You should use them selectively based on your requirements.
 
 
 ## Finish :checkered_flag:
 
-Have you understood the basics of using Query? This concludes the tutorial :confetti_ball:
+Do you understand the basics of using Form? This concludes the tutorial :confetti_ball:
 
-If you wish to continue learning, it would be a good idea to try running the `FormScreen` found in the [sample](https://github.com/soil-kt/soil/tree/1.0.0-alpha10/sample/) code.
+If you wish to continue learning, try running the `FormScreen` found in the [sample](https://github.com/soil-kt/soil/tree/1.0.0-alpha10/sample/) code.
 If you have any concerns, please feel free to provide feedback on [Github discussions](https://github.com/soil-kt/soil/discussions).
 
 Love the project? :star: it on [GitHub](https://github.com/soil-kt/soil) and help us make it even better!
