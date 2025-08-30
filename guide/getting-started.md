@@ -7,7 +7,7 @@ If your browser supports [WasmGC](https://github.com/WebAssembly/gc), you can ru
 
 :point_right: [Sample App](https://play.soil-kt.com/)
 
-Source code: <https://github.com/soil-kt/soil/tree/1.0.0-alpha12/sample/>
+Source code: <https://github.com/soil-kt/soil/tree/1.0.0-alpha13/sample/>
 
 
 ## Download
@@ -33,7 +33,7 @@ repositories {
 
 ```kts [Dependencies]
 dependencies {
-    val soil = "1.0.0-alpha12"
+    val soil = "1.0.0-alpha13"
 
     // Query
     implementation("com.soil-kt.soil:query-core:$soil")
@@ -59,7 +59,7 @@ dependencies {
 
 ```yaml [Version Catalog]
 [versions]
-soil = "1.0.0-alpha12"
+soil = "1.0.0-alpha13"
 
 [libraries]
 # Query
