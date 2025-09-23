@@ -219,7 +219,7 @@ For typical scenarios, the `rememberForm`-only approach is sufficient. You shoul
 
 Do you understand the basics of using Form? This concludes the tutorial :confetti_ball:
 
-If you wish to continue learning, try running the `FormScreen` found in the [sample](https://github.com/soil-kt/soil/tree/1.0.0-alpha13/sample/) code.
+If you wish to continue learning, try running the `FormScreen` found in the [sample](https://github.com/soil-kt/soil/tree/1.0.0-alpha14/sample/) code.
 If you have any concerns, please feel free to provide feedback on [Github discussions](https://github.com/soil-kt/soil/discussions).
 
 Love the project? :star: it on [GitHub](https://github.com/soil-kt/soil) and help us make it even better!
